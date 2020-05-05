@@ -1,0 +1,75 @@
+#count the words in a text
+from collections import Counter
+
+def word_counter_fast(text):
+    skips = [".", ",", ";", ":", '"', "''"]
+    text = text.lower()
+    for items in skips:
+        text = text.replace(items, "")
+    #word_counts = {}
+    #for words in text.split(" "):
+     #   if words in word_counts:
+      #      word_counts[words] += 1
+       # else:
+        #    word_counts[words] = 1
+    word_counts = Counter(text.split(" "))
+    return word_counts
+
+#read a text file, then return the string
+def book_reader(file_path):
+    with open(file_path, "r", encoding = "utf8") as current_file:
+        text = current_file.read()
+        text = text.replace("\n", "").replace("\r", "")
+    return text
+    
+    
+#return the unique word count and a list of word count for each unique word
+def word_stats(word_counts):
+    num_unique = len(word_counts)
+    words = word_counts.values()
+    return (num_unique, words)  
+
+
+#=====================End=of=Function=definition========================#
+
+
+import os
+import pandas as pd
+
+#create a pandas dataframe, sort of a table
+stats = pd.DataFrame(columns = ("language", "author", "title", "length", "unique"))
+title_num = 1
+
+#codes below iterates over the items in the folder ./books and inside of it, then opening each individual file, 
+#find the unique words and total word counts and then inserting those entries into the panda dataframe
+
+book_dir = "./Books"
+for language in os.listdir(book_dir):
+    for author in os.listdir(book_dir + "/" + language):
+        for title in os.listdir(book_dir + "/" + language + "/" + author):
+            inputfile = book_dir + "/" + language + "/" + author + "/" + title
+            print(inputfile)
+            text = book_reader(inputfile)
+            (num_unique, counts) = word_stats(word_counter_fast(text))
+            stats.loc[title_num] = language, author.capitalize(), title.replace(".txt","") , sum(counts), num_unique
+            title_num += 1
+            
+
+#plot a graph which contains the scatter of unique word count and total word count from each entries grouped by language
+plt.figure(figsize = (10,10))
+subset = stats[stats.language == "English"]
+plt.loglog(subset.length, subset.unique, "o", label = "English", color = "red")
+
+subset = stats[stats.language == "French"]
+plt.loglog(subset.length, subset.unique, "o", label = "French", color = "blue")
+
+subset = stats[stats.language == "German"]
+plt.loglog(subset.length, subset.unique, "o", label = "German", color = "orange")
+
+subset = stats[stats.language == "Portuguese"]
+plt.loglog(subset.length, subset.unique, "o", label = "Portuguese", color = "green")
+
+plt.legend()
+plt.xlabel("Book length")
+plt.ylabel("Number of unique words")
+plt.savefig("lang_plot.pdf")
