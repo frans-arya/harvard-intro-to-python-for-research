@@ -113,22 +113,65 @@ def evaluate(board):
         winner = -1
     return winner    
     
-#simulate game
-board = create_board()
+#function to play the game 1 time
+def play_game():
+    board = create_board()
+    #1st player move, then 2nd player
+    i = 1
+    while i < 10:
+        if(i%2 == 0):
+            random_place(board,2)
+            #evaluate if after placement player 2 is the winner
+            if evaluate(board) == 2:
+                return 2
+        else:
+            random_place(board,1)
+            #evaluate if after placement player 1 is the winner
+            if evaluate(board) == 1:
+                return 1
+        i += 1
+    return evaluate(board)
 
-#seed the random function if required
-random.seed(1)
+#function to play the game 1 time
+def play_strategic_game():
+    board = create_board()
+    #1st player always place middle of the square first
+    board[1,1] = 1
+    i = 2
+    while i < 10:
+        if(i%2 == 0):
+            random_place(board,2)
+            #evaluate if after placement player 2 is the winner
+            if evaluate(board) == 2:
+                return 2
+        else:
+            random_place(board,1)
+            #evaluate if after placement player 1 is the winner
+            if evaluate(board) == 1:
+                return 1
+        i += 1
+    return evaluate(board)
 
-#1st player move, then 2nd player move
-i = 1
-while i < 10:
-    if(i%2 == 0):
-        random_place(board,2)
-        print(board)
-    else:
-        random_place(board,1)
-        print(board)
-    i += 1
+#teacher's solution
+def play_game_alternative():
+    board, winner = create_board(), 0
+    board[1,1] = 1
+    while winner == 0:
+        for player in [2,1]:
+            random_place(board, player)
+            winner = evaluate(board)
+            if winner != 0:
+                break
+    return winner
 
-#print the winner, 0 or -1 if no winner    
-evaluate(board)
+#teacher's solution
+def play_strategic_game_alternative():
+    board, winner = create_board(), 0
+    board[1,1] = 1
+    while winner == 0:
+        for player in [2,1]:
+            random_place(board, player)
+            winner = evaluate(board)
+            if winner != 0:
+                break
+    return winner
