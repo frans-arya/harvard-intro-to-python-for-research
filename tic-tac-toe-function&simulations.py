@@ -175,3 +175,13 @@ def play_strategic_game_alternative():
             if winner != 0:
                 break
     return winner
+
+#===================end=of=function=definition==========================#
+
+#simulate playing 1000 times
+random.seed(1)
+
+results = [play_game() for i in range(1000)]
+
+#.count(x) counts the number of occurences of x in the list 
+results.count(1)
