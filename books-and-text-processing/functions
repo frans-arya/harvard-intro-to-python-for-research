@@ -2,7 +2,7 @@
 from collections import Counter
 
 def word_counter_fast(text):
-    skips = [".", ",", ";", ":", '"', "''"]
+    skips = [".", ",", ";", ":", "'", '"', "\n", "!", "?", "(", ")"]
     text = text.lower()
     for items in skips:
         text = text.replace(items, "")
